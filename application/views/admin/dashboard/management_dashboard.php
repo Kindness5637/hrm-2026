@@ -11,20 +11,6 @@ $role_resources_ids = !is_null($role_user) ? explode(',',$role_user[0]->role_res
 ?>
 <?php $get_animate = $this->Xin_model->get_content_animate();?>
 
-<?php $announcement = $this->Announcement_model->get_new_announcements();?>
-<?php foreach($announcement as $new_announcement):?>
-<?php
-	$current_date = strtotime(date('Y-m-d'));
-	$announcement_end_date = strtotime($new_announcement->end_date);
-	if($current_date <= $announcement_end_date) {
-?>
-<div class="alert alert-success alert-dismissible fade in mb-1" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">×</span></button>
-  <strong><?php echo $new_announcement->title;?>:</strong> <?php echo $new_announcement->summary;?> <a href="#" class="alert-link" data-toggle="modal" data-target=".view-modal-annoucement" data-announcement_id="<?php echo $new_announcement->announcement_id;?>"><?php echo $this->lang->line('xin_view');?></a>
-</div>
-<?php } ?>
-<?php endforeach;?>
-
 <div class="box-widget widget-user-2">
   <div class="widget-user-header">
     <h4 class="widget-user-username welcome-hrsale-user"><?php echo $this->lang->line('xin_title_wcb');?>, <?php echo $user_info[0]->first_name.' '.$user_info[0]->last_name;?>!</h4>
