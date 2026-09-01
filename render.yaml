@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: hrm-app
+    runtime: php
+    plan: free
+    buildCommand: "apt-get update && apt-get install -y libpng-dev && composer install --no-dev --optimize-autoloader"
+    startCommand: "php -S 0.0.0.0:$PORT index.php"
+    envVars:
+      - key: ENVIRONMENT
+        value: "production"
