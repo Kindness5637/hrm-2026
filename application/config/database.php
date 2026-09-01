@@ -73,16 +73,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+if (getenv('DB_HOST')) {
+	$db_host = getenv('DB_HOST');
+	$db_port = getenv('DB_PORT') ?: '3306';
+	$db_user = getenv('DB_USER');
+	$db_pass = getenv('DB_PASS');
+	$db_name = getenv('DB_NAME');
+	$db_ssl  = getenv('DB_SSL');
+} else {
+	$db_host = 'sql106.infinityfree.com';
+	$db_port = '3306';
+	$db_user = 'if0_42801771';
+	$db_pass = 'Kindness5637';
+	$db_name = 'if0_42801771_hrmxtra_hrm';
+	$db_ssl  = '';
+}
+
 $db['default'] = array(
-	'dsn'	=> 'mysql:host='.(getenv('DB_HOST') ?: '127.0.0.1').';port='.(getenv('DB_PORT') ?: '3306').';dbname='.(getenv('DB_NAME') ?: 'hrmxtra_hrm'),
-	'hostname' => getenv('DB_HOST') ?: '127.0.0.1',
-	'username' => getenv('DB_USER') ?: 'hrmuser',
-	'password' => getenv('DB_PASS') ?: 'b@irk@@',
-	'database' => getenv('DB_NAME') ?: 'hrmxtra_hrm',
-	'dbdriver' => 'pdo',
+	'dsn'	=> 'mysql:host='.$db_host.';port='.$db_port.';dbname='.$db_name,
+	'hostname' => $db_host,
+	'username' => $db_user,
+	'password' => $db_pass,
+	'database' => $db_name,
+	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => TRUE,
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
