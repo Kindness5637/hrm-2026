@@ -482,3 +482,21 @@
   });
 })();
 </script>
+
+<!-- Preview Recipients Modal -->
+<div class="modal fade" id="nc_preview_modal" tabindex="-1" role="dialog" aria-labelledby="nc_preview_modal_label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="border-radius:8px;overflow:hidden;">
+      <div class="modal-header" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:15px 20px;">
+        <h5 class="modal-title" id="nc_preview_modal_label" style="color:#fff;font-weight:600;"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#fff;opacity:0.8;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding:20px;"></div>
+      <div class="modal-footer" style="border-top:1px solid #f0f0f0;padding:12px 20px;">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

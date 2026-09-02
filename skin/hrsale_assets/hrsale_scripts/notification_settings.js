@@ -171,11 +171,29 @@ $(document).ready(function(){
         if (JSON.error != '') {
           toastr.error(JSON.error);
         } else {
-          var emails = JSON.data.length > 0 ? JSON.data.join(', ') : '(no recipients configured)';
-          toastr.info(JSON.result);
-          // Show in a temporary alert
-          var msg = '<strong>' + module + ' → ' + event + '</strong><br>' + emails;
-          alert(msg);
+          var emails = JSON.data;
+          var count = emails.length;
+          var title = '<i class="fa fa-bell text-primary"></i> ' + module.charAt(0).toUpperCase() + module.slice(1) + ' &rarr; ' + event.charAt(0).toUpperCase() + event.slice(1);
+          
+          var body = '';
+          if (count === 0) {
+            body = '<div class="text-center text-muted py-4"><i class="fa fa-user-slash font-size-40 mb-2"></i><p>No recipients configured for this rule.</p></div>';
+          } else {
+            body = '<p class="text-muted mb-3"><span class="badge badge-primary">' + count + '</span> recipient(s) will be notified:</p>';
+            body += '<div style="max-height:300px;overflow-y:auto;">';
+            for (var i = 0; i < emails.length; i++) {
+              body += '<div style="display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #f0f0f0;">';
+              body += '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;">';
+              body += '<i class="fa fa-envelope" style="color:#fff;font-size:12px;"></i></div>';
+              body += '<div><div style="font-weight:500;color:#333;font-size:13px;">' + emails[i] + '</div></div>';
+              body += '</div>';
+            }
+            body += '</div>';
+          }
+          
+          $('#nc_preview_modal .modal-title').html(title);
+          $('#nc_preview_modal .modal-body').html(body);
+          $('#nc_preview_modal').modal('show');
         }
       }
     });
