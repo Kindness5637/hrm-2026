@@ -80,6 +80,13 @@ if (getenv('DB_HOST')) {
 	$db_pass = getenv('DB_PASS');
 	$db_name = getenv('DB_NAME');
 	$db_ssl  = getenv('DB_SSL');
+} elseif (file_exists('/home/kindness')) {
+	$db_host = '127.0.0.1';
+	$db_port = '3306';
+	$db_user = 'hrmuser';
+	$db_pass = 'b@irk@@';
+	$db_name = 'hrmxtra_hrm';
+	$db_ssl  = '';
 } else {
 	$db_host = 'sql106.infinityfree.com';
 	$db_port = '3306';

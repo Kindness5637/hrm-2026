@@ -23,7 +23,7 @@ else:
 	$flg_icn = '<img src="'.base_url().'uploads/languages_flag/'.$flg_icn.'">';
 endif;
 if($system[0]->enable_auth_background!='yes'):
-	$auth_bg = 'style="background-image: url('.base_url().'brick_bg.php); background-size: cover; background-repeat: no-repeat; background-position: center;"';
+	$auth_bg = 'style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); background-size: cover; background-repeat: no-repeat; background-position: center;"';
 else:
 	$auth_bg = '';	
 endif;
@@ -49,7 +49,7 @@ endif;
 <link rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/vendor/toastr/toastr.min.css">
 <!-- animate -->
 <link media="all" type="text/css" rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/css/hrsale/animate.css">
-<link media="all" type="text/css" rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/css/hrsale/xin_login_3.css">
+<link media="all" type="text/css" rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/css/hrsale/xin_login_3.css?v=<?php echo time();?>">
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
