@@ -484,6 +484,17 @@
 </script>
 
 <!-- Preview Recipients Modal -->
+<style>
+#nc_preview_modal .modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  margin-top: 50px;
+}
+#nc_preview_modal .modal-content {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+</style>
 <div class="modal fade" id="nc_preview_modal" tabindex="-1" role="dialog" aria-labelledby="nc_preview_modal_label">
   <div class="modal-dialog" role="document">
     <div class="modal-content" style="border-radius:8px;overflow:hidden;">
