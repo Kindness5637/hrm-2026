@@ -72,7 +72,7 @@ endif;
     margin-top: 0px;
 }
 </style>
-<div class="login-box animated fadeInDownBig"> 
+<div class="login-box animated fadeInDownBig" style="background: #fff; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); padding: 20px; margin-top: 60px; max-width: 400px; margin-left: auto; margin-right: auto;"> 
   
   <!-- /.login-logo -->
   <?php if($this->session->flashdata('reset_password_success')):?>
