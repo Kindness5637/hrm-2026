@@ -485,14 +485,39 @@
 
 <!-- Preview Recipients Modal -->
 <style>
+#nc_preview_modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+#nc_preview_modal .modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9998;
+}
 #nc_preview_modal .modal-dialog {
-  display: flex;
-  align-items: center;
-  min-height: calc(100vh - 100px);
-  margin-top: 50px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  max-width: 90vw;
+  max-height: 85vh;
+  margin: 0;
+  z-index: 10000;
 }
 #nc_preview_modal .modal-content {
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  overflow: hidden;
 }
 </style>
 <div class="modal fade" id="nc_preview_modal" tabindex="-1" role="dialog" aria-labelledby="nc_preview_modal_label">
