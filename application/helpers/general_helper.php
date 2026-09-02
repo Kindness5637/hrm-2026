@@ -744,6 +744,10 @@ if ( ! function_exists('hrm_resolve_role_recipients'))
 				if ($emp_id) {
 					$u = $CI->db->select('email')->from('xin_employees')->where('user_id', $emp_id)->limit(1)->get()->row();
 					if ($u && !empty($u->email)) $emails[] = $u->email;
+				} else {
+					// No specific employee — return all active employees
+					$rows = $CI->db->select('email')->from('xin_employees')->where('is_active', 1)->get()->result();
+					foreach ($rows as $r) { if (!empty($r->email)) $emails[] = $r->email; }
 				}
 				break;
 
