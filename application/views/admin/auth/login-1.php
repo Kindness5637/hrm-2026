@@ -23,9 +23,9 @@ else:
 	$flg_icn = '<img src="'.base_url().'uploads/languages_flag/'.$flg_icn.'">';
 endif;
 if($system[0]->enable_auth_background=='yes'):
-	$auth_bg = 'style="background-position: center center; background-size: cover; background-color: #ffffff;"';
+	$auth_bg = 'style="background-color: #ffffff; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;"';
 else:
-	$auth_bg = 'style="background-color: #ffffff;"';	
+	$auth_bg = 'style="background-color: #ffffff; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0;"';	
 endif;
 ?>
 <!DOCTYPE html>
@@ -72,7 +72,7 @@ endif;
     margin-top: 0px;
 }
 </style>
-<div class="login-box animated fadeInDownBig" style="background: #fff; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); padding: 20px; margin-top: 60px; max-width: 400px; margin-left: auto; margin-right: auto;"> 
+<div class="login-box animated fadeInDownBig" style="background: #fff; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); padding: 40px 50px; max-width: 520px; width: 100%; flex-shrink: 0;"> 
   
   <!-- /.login-logo -->
   <?php if($this->session->flashdata('reset_password_success')):?>
@@ -83,7 +83,7 @@ endif;
   <div class="login-box-body">
     <div class="login-logo"> 
       <!--<b style="color:#FFF;"><?php echo $company[0]->company_name;?></b>hrm--> 
-      <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="stalis logo"> </div>
+      <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="stalis logo" style="max-width: 280px; height: auto; margin-bottom: 10px;"> </div>
     <p class="login-box-msg"><?php echo $this->lang->line('xin_admin_login');?><?php echo $company[0]->company_name;?></p>
     <?php $attributes = array('class' => 'form-hrsale', 'name' => 'hrm-form', 'id' => 'hrm-form', 'data-redirect' => 'dashboard', 'data-form-table' => 'login', 'data-is-redirect' => '1', 'autocomplete' => 'off');?>
     <?php $hidden = array('user_id' => 0);?>
@@ -101,10 +101,10 @@ endif;
 		$ilogn_info2 = 'jsmt12@stalis.co.ke';
 	endif;?>
     <div class="form-group has-feedback">
-      <input type="text" id="iusername" name="iusername" class="form-control" placeholder="<?php echo $login_txt;?>" autocomplete="off">
+      <input type="text" id="iusername" name="iusername" class="form-control" placeholder="<?php echo $login_txt;?>" autocomplete="off" style="height: 48px; font-size: 15px;">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span> </div>
-    <div class="form-group has-feedback">
-      <input type="password" class="form-control" id="ipassword" name="ipassword" placeholder="Enter Password" autocomplete="off">
+    <div class="form-group has-feedback" style="margin-bottom: 22px;">
+      <input type="password" class="form-control" id="ipassword" name="ipassword" placeholder="Enter Password" autocomplete="off" style="height: 48px; font-size: 15px;">
       <span class="glyphicon glyphicon-lock form-control-feedback"></span> </div>
     <div class="row">
       <div class="col-xs-8"> <a href="<?php echo site_url('admin/auth/forgot_password');?>" class="d-block small"><?php echo $this->lang->line('xin_forgot_password_link');?></a> </div>
