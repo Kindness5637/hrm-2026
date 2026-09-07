@@ -83,7 +83,11 @@ endif;
   <div class="login-box-body">
     <div class="login-logo"> 
       <!--<b style="color:#FFF;"><?php echo $company[0]->company_name;?></b>hrm--> 
-      <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="stalis logo" style="max-width: 280px; height: auto; margin-bottom: 10px;"> </div>
+      <?php if(!empty($company[0]->sign_in_logo_data)):?>
+      <img src="data:image/png;base64,<?php echo $company[0]->sign_in_logo_data;?>" alt="stalis logo" style="max-width: 280px; height: auto; margin-bottom: 10px;">
+      <?php else:?>
+      <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="stalis logo" style="max-width: 280px; height: auto; margin-bottom: 10px;">
+      <?php endif;?> </div>
     <p class="login-box-msg"><?php echo $this->lang->line('xin_admin_login');?><?php echo $company[0]->company_name;?></p>
     <?php $attributes = array('class' => 'form-hrsale', 'name' => 'hrm-form', 'id' => 'hrm-form', 'data-redirect' => 'dashboard', 'data-form-table' => 'login', 'data-is-redirect' => '1', 'autocomplete' => 'off');?>
     <?php $hidden = array('user_id' => 0);?>

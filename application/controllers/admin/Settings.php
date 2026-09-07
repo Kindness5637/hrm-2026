@@ -3863,7 +3863,45 @@ class Settings extends MY_Controller {
 			. '<p>If you received this, your SMTP configuration is working.</p>'
 			. '<p>Sent: ' . date('Y-m-d H:i:s') . '</p></div>';
 
-		$sent = hrsale_mail($from_email, $from_name, $to, $subject, $body);
+		// Direct PHPMailer send with error capture
+		$mailer_dir = APPPATH.'third_party/phpmailer/';
+		if(file_exists($mailer_dir.'PHPMailerAutoload.php')){
+			require_once $mailer_dir.'PHPMailerAutoload.php';
+		}
+		if(class_exists('PHPMailer')){
+			$mail = new PHPMailer();
+			$mail->isSMTP();
+			$mail->Host = get_smtp('smtp_host');
+			$mail->SMTPAuth = true;
+			$mail->Username = get_smtp('smtp_username');
+			$mail->Password = get_smtp('smtp_password');
+			$mail->SMTPSecure = get_smtp_secure();
+			$mail->Port = get_smtp('smtp_port');
+			$mail->CharSet = 'UTF-8';
+			$mail->SMTPAutoTLS = false;
+			$mail->SMTPOptions = array(
+				'ssl' => array(
+					'verify_peer' => false,
+					'verify_peer_name' => false,
+					'allow_self_signed' => true,
+				)
+			);
+			$mail->setFrom($from_email, $from_name);
+			$mail->addAddress($to);
+			$mail->isHTML(true);
+			$mail->Subject = $subject;
+			$mail->Body = $body;
+			$mail->AltBody = strip_tags($body);
+			try {
+				$sent = $mail->send();
+			} catch (Exception $e) {
+				$sent = false;
+				error_log('HRM SMTP Error: ' . $mail->ErrorInfo);
+			}
+			log_notification_mail($from_email, $to, '', $subject, $sent);
+		} else {
+			$sent = hrsale_mail($from_email, $from_name, $to, $subject, $body);
+		}
 
 		if ($sent) {
 			$Return['result'] = 'Test email sent to ' . htmlspecialchars($to) . '.';
