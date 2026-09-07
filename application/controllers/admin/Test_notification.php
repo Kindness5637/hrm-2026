@@ -39,8 +39,14 @@ class Test_notification extends CI_Controller {
 		$from = $user;
 		$from_name = hrsale_company_name();
 		$to = 'kindnesszawadi5637@gmail.com';
-		$subject = 'HRM Test - ' . date('Y-m-d H:i:s');
-		$body = '<h3>Test Email</h3><p>Time: ' . date('Y-m-d H:i:s') . '</p>';
+		$subject = 'Welcome to Stalis HRM';
+		$body = '<div style="font-family:Verdana,Arial,sans-serif;padding:20px;">'
+			. '<h2 style="color:#2d385e;">Welcome to Stalis HRM</h2>'
+			. '<p>Dear Team,</p>'
+			. '<p>We are pleased to welcome you to the <strong>Stalis HRM System</strong>. This platform is designed to streamline our human resource management processes, including employee records, leave management, attendance tracking, and notifications.</p>'
+			. '<p>If you have any questions or need assistance, please do not hesitate to reach out to the HR department.</p>'
+			. '<p>Best regards,<br><strong>' . htmlspecialchars($from_name) . '</strong></p>'
+			. '<p style="color:#999;font-size:11px;">Sent: ' . date('Y-m-d H:i:s') . '</p></div>';
 
 		if ($pm_exists) {
 			$mail = new PHPMailer();

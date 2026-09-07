@@ -59,7 +59,12 @@ function hrsale_mail($from,$from_name,$to,$subject,$body){
 			$mail->Subject = $subject;
 			$mail->Body    = $body;
 			$mail->AltBody = strip_tags($body);
-			$sent = $mail->send();
+			try {
+				$sent = $mail->send();
+			} catch (Exception $e) {
+				$sent = false;
+				error_log('HRM SMTP Error: ' . $mail->ErrorInfo);
+			}
 		} else {
 			// Fallback to CI3 email library if PHPMailer unavailable.
 			$CI->load->library('email');

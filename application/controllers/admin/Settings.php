@@ -3855,30 +3855,37 @@ class Settings extends MY_Controller {
 		}
 
 		$company_info = $this->Xin_model->read_company_setting_info(1);
-		$from_email = get_smtp('smtp_username');
+		$from_email = 'aleslaikipia@gmail.com';
 		$from_name = !empty($company_info[0]->company_name) ? $company_info[0]->company_name : 'HRM';
-		$subject = 'HRM Notification Test';
+		$subject = 'Welcome to Stalis HRM';
+		$cc = get_notification_cc();
 		$body = '<div style="font-family:Verdana,Arial,sans-serif;font-size:12px;padding:20px;">'
-			. '<p>This is a <strong>test notification</strong> from ' . htmlspecialchars($from_name) . '.</p>'
-			. '<p>If you received this, your SMTP configuration is working.</p>'
-			. '<p>Sent: ' . date('Y-m-d H:i:s') . '</p></div>';
+			. '<h2 style="color:#2d385e;">Welcome to Stalis HRM</h2>'
+			. '<p>Dear Team,</p>'
+			. '<p>We are pleased to welcome you to the <strong>Stalis HRM System</strong>. This platform is designed to streamline our human resource management processes, including employee records, leave management, attendance tracking, and notifications.</p>'
+			. '<p>If you have any questions or need assistance, please do not hesitate to reach out to the HR department.</p>'
+			. '<p>Best regards,<br><strong>' . htmlspecialchars($from_name) . '</strong></p>'
+			. '<p style="color:#999;font-size:11px;">Sent: ' . date('Y-m-d H:i:s') . '</p></div>';
 
-		// Direct PHPMailer send with error capture
+		// Send via Gmail SMTP directly (bypass hrsale_mail decrypt issues)
+		$sent = false;
+		$error_msg = '';
 		$mailer_dir = APPPATH.'third_party/phpmailer/';
 		if(file_exists($mailer_dir.'PHPMailerAutoload.php')){
 			require_once $mailer_dir.'PHPMailerAutoload.php';
 		}
-		if(class_exists('PHPMailer')){
-			$mail = new PHPMailer();
+		try {
+			$mail = new PHPMailer(true);
 			$mail->isSMTP();
-			$mail->Host = get_smtp('smtp_host');
+			$mail->Host = 'smtp.gmail.com';
 			$mail->SMTPAuth = true;
-			$mail->Username = get_smtp('smtp_username');
-			$mail->Password = get_smtp('smtp_password');
-			$mail->SMTPSecure = get_smtp_secure();
-			$mail->Port = get_smtp('smtp_port');
+			$mail->Username = 'aleslaikipia@gmail.com';
+			$mail->Password = 'gadlduwkjumbzkpw';
+			$mail->SMTPSecure = 'tls';
+			$mail->Port = 587;
 			$mail->CharSet = 'UTF-8';
 			$mail->SMTPAutoTLS = false;
+			$mail->Timeout = 15;
 			$mail->SMTPOptions = array(
 				'ssl' => array(
 					'verify_peer' => false,
@@ -3886,27 +3893,30 @@ class Settings extends MY_Controller {
 					'allow_self_signed' => true,
 				)
 			);
-			$mail->setFrom($from_email, $from_name);
+			$mail->setFrom('aleslaikipia@gmail.com', 'Stalis HRM');
 			$mail->addAddress($to);
+			if(!empty($cc)){
+				foreach(array_map('trim', explode(',', $cc)) as $cc_email){
+					if(!empty($cc_email) && filter_var($cc_email, FILTER_VALIDATE_EMAIL)){
+						$mail->addCC($cc_email);
+					}
+				}
+			}
 			$mail->isHTML(true);
 			$mail->Subject = $subject;
 			$mail->Body = $body;
 			$mail->AltBody = strip_tags($body);
-			try {
-				$sent = $mail->send();
-			} catch (Exception $e) {
-				$sent = false;
-				error_log('HRM SMTP Error: ' . $mail->ErrorInfo);
-			}
-			log_notification_mail($from_email, $to, '', $subject, $sent);
-		} else {
-			$sent = hrsale_mail($from_email, $from_name, $to, $subject, $body);
+			$sent = $mail->send();
+			log_notification_mail('aleslaikipia@gmail.com', $to, $cc, $subject, true);
+		} catch (Exception $e) {
+			$error_msg = $e->getMessage();
+			log_notification_mail('aleslaikipia@gmail.com', $to, $cc, $subject, false);
 		}
 
 		if ($sent) {
 			$Return['result'] = 'Test email sent to ' . htmlspecialchars($to) . '.';
 		} else {
-			$Return['error'] = 'Failed to send test email to ' . htmlspecialchars($to) . '. Check SMTP settings.';
+			$Return['error'] = 'Failed to send. Error: ' . ($error_msg ?: 'Check SMTP settings and error_log.') . ' Password used: ' . substr(get_smtp('smtp_password'), 0, 4) . '***';
 		}
 		$this->output($Return);
 		exit;
