@@ -169,9 +169,7 @@ class Employees extends MY_Controller {
 
 		$data['title'] = $this->Xin_model->site_title();
 		$session = $this->session->userdata('username');
-		if(!empty($session)){ 
-			$this->load->view("admin/employees/employees_list", $data);
-		} else {
+		if(empty($session)) {
 			redirect('admin/');
 		}
 		// Datatables Variables
@@ -283,8 +281,7 @@ class Employees extends MY_Controller {
 			 "recordsFiltered" => $employee->num_rows(),
 			 "data" => $data
 		);
-	  echo json_encode($output);
-	  exit();
+	  $this->output($output);
      }
 	 
 	 public function employees_cards_list()
