@@ -61,7 +61,7 @@ endif;
 
 <script>(function(t,e,s,o){var n,c,l;t.SMCX=t.SMCX||[],e.getElementById(o)||(n=e.getElementsByTagName(s),c=n[n.length-1],l=e.createElement(s),l.type="text/javascript",l.async=!0,l.id=o,l.src="https://widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgd0yZwzQJHsrm2MLLUsEqAngsgYPX65XbPBb6VcBswZ9e.js",c.parentNode.insertBefore(l,c))})(window,document,"script","smcx-sdk");</script>
 </head>
-<body class="hold-transition login-page" <?php echo $auth_bg;?>>
+<body class="hold-transition login-page" <?php echo $auth_bg;?> >
 <img id="hrload-img" src="<?php echo base_url()?>skin/img/loading.gif" style="">
 <style type="text/css">
 #hrload-img {
@@ -71,6 +71,40 @@ endif;
     margin-right: 25px;
     margin-top: 0px;
 }
+.login-page {
+  background-image: url('<?php echo base_url();?>cytonn-photography-n95VMLxqM2I-unsplash.jpg') !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+.login-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 0;
+}
+.login-box {
+  position: relative;
+  z-index: 1;
+}
+  .password-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #777;
+    z-index: 2;
+  }
+  .password-toggle:focus {
+    outline: 1px dotted #333;
+    outline-offset: -4px;
+  }
 </style>
 <div class="login-box animated fadeInDownBig" style="background: #fff; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); padding: 40px 50px; max-width: 520px; width: 100%; flex-shrink: 0;"> 
   
@@ -108,8 +142,10 @@ endif;
       <input type="text" id="iusername" name="iusername" class="form-control" placeholder="<?php echo $login_txt;?>" autocomplete="off" style="height: 48px; font-size: 15px;">
       <span class="glyphicon glyphicon-envelope form-control-feedback"></span> </div>
     <div class="form-group has-feedback" style="margin-bottom: 22px;">
-      <input type="password" class="form-control" id="ipassword" name="ipassword" placeholder="Enter Password" autocomplete="off" style="height: 48px; font-size: 15px;">
-      <span class="glyphicon glyphicon-lock form-control-feedback"></span> </div>
+      <input type="password" class="form-control" id="ipassword" name="ipassword" placeholder="Enter Password" autocomplete="off" style="height: 48px; font-size: 15px; padding-right: 42px;">
+      <button type="button" class="password-toggle" id="toggle-password" aria-label="Show password" aria-pressed="false" title="Show password">
+        <i class="fa fa-eye" aria-hidden="true"></i>
+      </button> </div>
     <div class="row">
       <div class="col-xs-8"> <a href="<?php echo site_url('admin/auth/forgot_password');?>" class="d-block small"><?php echo $this->lang->line('xin_forgot_password_link');?></a> </div>
       <!-- /.col -->
@@ -163,6 +199,15 @@ $(".login-as").click(function(){
 		jQuery('#iusername').val(uname);
 		jQuery('#ipassword').val(password);
 	});
+  $("#toggle-password").click(function(){
+    var passwordInput = $("#ipassword");
+    var isVisible = passwordInput.attr("type") === "text";
+    passwordInput.attr("type", isVisible ? "password" : "text");
+    $(this).attr("aria-pressed", !isVisible);
+    $(this).attr("aria-label", isVisible ? "Show password" : "Hide password");
+    $(this).attr("title", isVisible ? "Show password" : "Hide password");
+    $(this).find("i").toggleClass("fa-eye", isVisible).toggleClass("fa-eye-slash", !isVisible);
+  });
 });	
 </script>
 
