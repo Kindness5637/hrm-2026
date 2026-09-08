@@ -828,7 +828,8 @@ if ( ! function_exists('hrm_notify'))
 	function hrm_notify($module, $event, $payload, $message, $from_email = null, $from_name = null) {
 		$CI =& get_instance();
 		if (is_null($from_email)) {
-			$from_email = get_smtp('smtp_username');
+			$smtp_row = $CI->db->select('smtp_username')->from('xin_email_configuration')->limit(1)->get()->row();
+			$from_email = $smtp_row ? $smtp_row->smtp_username : '';
 		}
 		if (is_null($from_name)) {
 			$ci = $CI->db->select('company_name')->from('xin_company_info')->limit(1)->get()->row();

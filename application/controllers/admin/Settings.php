@@ -3854,8 +3854,16 @@ class Settings extends MY_Controller {
 			exit;
 		}
 
+		// Read SMTP config directly from DB (bypass hrsale_mail decrypt)
+		$row = $this->db->select('*')->from('xin_email_configuration')->limit(1)->get()->row();
+		$smtp_host = $row->smtp_host;
+		$smtp_user = $row->smtp_username;
+		$smtp_pass = $row->smtp_password;
+		$smtp_port = $row->smtp_port;
+		$smtp_secure = $row->smtp_secure;
+
 		$company_info = $this->Xin_model->read_company_setting_info(1);
-		$from_email = 'aleslaikipia@gmail.com';
+		$from_email = $smtp_user;
 		$from_name = !empty($company_info[0]->company_name) ? $company_info[0]->company_name : 'HRM';
 		$subject = 'Welcome to Stalis HRM';
 		$cc = get_notification_cc();
@@ -3877,12 +3885,12 @@ class Settings extends MY_Controller {
 		try {
 			$mail = new PHPMailer(true);
 			$mail->isSMTP();
-			$mail->Host = 'smtp.gmail.com';
+			$mail->Host = $smtp_host;
 			$mail->SMTPAuth = true;
-			$mail->Username = 'aleslaikipia@gmail.com';
-			$mail->Password = 'gadlduwkjumbzkpw';
-			$mail->SMTPSecure = 'tls';
-			$mail->Port = 587;
+			$mail->Username = $smtp_user;
+			$mail->Password = $smtp_pass;
+			$mail->SMTPSecure = $smtp_secure;
+			$mail->Port = $smtp_port;
 			$mail->CharSet = 'UTF-8';
 			$mail->SMTPAutoTLS = false;
 			$mail->Timeout = 15;
@@ -3893,7 +3901,7 @@ class Settings extends MY_Controller {
 					'allow_self_signed' => true,
 				)
 			);
-			$mail->setFrom('aleslaikipia@gmail.com', 'Stalis HRM');
+			$mail->setFrom($from_email, 'Stalis HRM');
 			$mail->addAddress($to);
 			if(!empty($cc)){
 				foreach(array_map('trim', explode(',', $cc)) as $cc_email){
@@ -3907,10 +3915,10 @@ class Settings extends MY_Controller {
 			$mail->Body = $body;
 			$mail->AltBody = strip_tags($body);
 			$sent = $mail->send();
-			log_notification_mail('aleslaikipia@gmail.com', $to, $cc, $subject, true);
+			log_notification_mail($from_email, $to, $cc, $subject, true, $body);
 		} catch (Exception $e) {
 			$error_msg = $e->getMessage();
-			log_notification_mail('aleslaikipia@gmail.com', $to, $cc, $subject, false);
+			log_notification_mail($from_email, $to, $cc, $subject, false, $body);
 		}
 
 		if ($sent) {

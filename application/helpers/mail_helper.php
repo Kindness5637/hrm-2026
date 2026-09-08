@@ -21,6 +21,8 @@ function hrsale_mail($from,$from_name,$to,$subject,$body){
 
 		$sent = (bool)$CI->email->send();
 	  } else if($type=="smtp"){
+		// Read SMTP config directly from DB (no decryption)
+		$smtp_row = $CI->db->select('*')->from('xin_email_configuration')->limit(1)->get()->row();
 		// Use PHPMailer for SMTP — supports SMTPOptions for SSL cert flexibility.
 		$mailer_dir = APPPATH.'third_party/phpmailer/';
 		if(file_exists($mailer_dir.'PHPMailerAutoload.php')){
@@ -29,12 +31,12 @@ function hrsale_mail($from,$from_name,$to,$subject,$body){
 		if(class_exists('PHPMailer')){
 			$mail = new PHPMailer();
 			$mail->isSMTP();
-			$mail->Host       = get_smtp("smtp_host");
+			$mail->Host       = $smtp_row->smtp_host;
 			$mail->SMTPAuth   = true;
-			$mail->Username   = get_smtp("smtp_username");
-			$mail->Password   = get_smtp("smtp_password");
-			$mail->SMTPSecure = get_smtp_secure();
-			$mail->Port       = get_smtp("smtp_port");
+			$mail->Username   = $smtp_row->smtp_username;
+			$mail->Password   = $smtp_row->smtp_password;
+			$mail->SMTPSecure = $smtp_row->smtp_secure;
+			$mail->Port       = $smtp_row->smtp_port;
 			$mail->CharSet    = 'UTF-8';
 			$mail->SMTPAutoTLS = false;
 			$mail->Timeout    = 30;
@@ -70,12 +72,12 @@ function hrsale_mail($from,$from_name,$to,$subject,$body){
 			$CI->load->library('email');
 			$CI->email->set_mailtype("html");
 			$config['protocol']    = 'smtp';
-			$config['smtp_crypto'] = get_smtp_secure();
-			$config['smtp_host']   = get_smtp("smtp_host");
-			$config['smtp_port']   = get_smtp("smtp_port");
+			$config['smtp_crypto'] = $smtp_row->smtp_secure;
+			$config['smtp_host']   = $smtp_row->smtp_host;
+			$config['smtp_port']   = $smtp_row->smtp_port;
 			$config['smtp_timeout']= '60';
-			$config['smtp_user']   = get_smtp("smtp_username");
-			$config['smtp_pass']   = get_smtp("smtp_password");
+			$config['smtp_user']   = $smtp_row->smtp_username;
+			$config['smtp_pass']   = $smtp_row->smtp_password;
 			$config['charset']     = 'utf-8';
 			$config['newline']     = "\r\n";
 			$config['mailtype']    = "html";
@@ -221,7 +223,7 @@ if( !function_exists('get_notification_cc') ){
 // Outbox echo: record every send attempt so delivery is observable / retryable.
 if( !function_exists('log_notification_mail') ){
 
- function log_notification_mail($from, $to, $cc = '', $subject = '', $sent = false){
+ function log_notification_mail($from, $to, $cc = '', $subject = '', $sent = false, $body = ''){
   $CI=& get_instance();
   if(!$CI->db->table_exists('xin_notification_outbox')){ return; }
   $CI->db->insert('xin_notification_outbox', array(
@@ -229,6 +231,7 @@ if( !function_exists('log_notification_mail') ){
    'sent_to'   => $to,
    'cc'        => $cc,
    'subject'   => substr($subject, 0, 255),
+   'body'      => $body,
    'status'    => $sent ? 'sent' : 'failed',
    'created_at'=> date('Y-m-d H:i:s'),
   ));

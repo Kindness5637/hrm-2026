@@ -160,6 +160,7 @@
                     <th>Subject</th>
                     <th>Status</th>
                     <th>Sent At</th>
+                    <th>View</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -178,10 +179,15 @@
                           <?php endif; ?>
                         </td>
                         <td><?php echo $row->created_at; ?></td>
+                        <td>
+                          <?php if (!empty($row->body)): ?>
+                            <button class="btn btn-xs btn-info nc-view-email" data-body="<?php echo htmlspecialchars($row->body); ?>" data-subject="<?php echo htmlspecialchars($row->subject); ?>" data-to="<?php echo htmlspecialchars($row->sent_to); ?>"><i class="fa fa-eye"></i> View</button>
+                          <?php endif; ?>
+                        </td>
                       </tr>
                     <?php endforeach; ?>
                   <?php else: ?>
-                    <tr><td colspan="6" class="text-center text-muted">No emails sent yet.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted">No emails sent yet.</td></tr>
                   <?php endif; ?>
                 </tbody>
               </table>
@@ -481,6 +487,21 @@
     }
   });
 })();
+</script>
+<script>
+$(document).on('click', '.nc-view-email', function(){
+  var body = $(this).data('body');
+  var subject = $(this).data('subject');
+  var to = $(this).data('to');
+  $('#nc_preview_modal_label').html('<i class="fa fa-envelope"></i> ' + subject);
+  $('.modal-body').html('<p><strong>To:</strong> ' + to + '</p><hr>' + body);
+  $('#nc_preview_modal').css('display','block').addClass('in');
+  $('body').append('<div class="modal-backdrop fade in" id="nc_view_backdrop"></div>');
+});
+$(document).on('click', '#nc_preview_modal .close, #nc_preview_modal .btn-secondary', function(){
+  $('#nc_preview_modal').css('display','none').removeClass('in');
+  $('#nc_view_backdrop').remove();
+});
 </script>
 
 <!-- Preview Recipients Modal -->
