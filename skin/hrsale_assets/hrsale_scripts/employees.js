@@ -72,8 +72,6 @@ $.ajax({
 $("#ihr_report").submit(function(e){
 	/*Form Submit*/
 		e.preventDefault();
-		//$('#hrload-img').show();
-		//toastr.info(processing_request);
 		 var xin_table2 = $('#xin_table').dataTable({
 			"bDestroy": true,
 			"ajax": {
@@ -85,16 +83,66 @@ $("#ihr_report").submit(function(e){
 			}
 		});
 		xin_table2.api().ajax.reload(function(){
-			//toastr.clear();
-//$('#hrload-img').hide();
 			toastr.success(request_submitted);
 		}, true);
 });
+
+// Helper: reinit select2 on a container and auto-select if only 1 option
+function reinitSelect2(container) {
+	var sel = container.find('select[data-plugin="select_hrm"]');
+	if (sel.length) {
+		sel.select2({ width:'100%' });
+		// Auto-select if only 1 real option
+		var opts = sel.find('option[value!=""]');
+		if (opts.length === 1) {
+			sel.val(opts.val()).trigger('change');
+		}
+	}
+}
+
+// === CHAIN: Company → Location → Department → Designation ===
+
+// Company change → load locations
 jQuery("#aj_company").change(function(){
-	jQuery.get(escapeHtmlSecure(base_url+"/get_company_elocations/"+jQuery(this).val()), function(data, status){
+	var cid = jQuery(this).val();
+	if (!cid) return;
+	jQuery.get(escapeHtmlSecure(base_url+"/get_company_elocations/"+cid), function(data, status){
 		jQuery('#location_ajax').html(data);
+		reinitSelect2(jQuery('#location_ajax'));
 	});
 });
+
+// Location change → load departments (event delegation for dynamically loaded content)
+jQuery(document).on('change', '#aj_location_id', function(){
+	var lid = jQuery(this).val();
+	if (!lid) return;
+	jQuery.get(base_url+"/get_location_departments/"+lid, function(data, status){
+		jQuery('#department_ajax').html(data);
+		reinitSelect2(jQuery('#department_ajax'));
+	});
+});
+
+// Department change → load designations (event delegation)
+jQuery(document).on('change', '#aj_subdepartments', function(){
+	var did = jQuery(this).val();
+	if (!did) return;
+	jQuery.get(base_url+"/is_designation/"+did, function(data, status){
+		jQuery('#designation_ajax').html(data);
+		reinitSelect2(jQuery('#designation_ajax'));
+	});
+});
+
+// Sub-department change → load designations (event delegation)
+jQuery(document).on('change', '#aj_subdepartment', function(){
+	var did = jQuery(this).val();
+	if (!did) return;
+	jQuery.get(base_url+"/designation/"+did, function(data, status){
+		jQuery('#designation_ajax').html(data);
+		reinitSelect2(jQuery('#designation_ajax'));
+	});
+});
+
+// Filter company change
 jQuery("#filter_company").change(function(){
 	if(jQuery(this).val() == 0){
 		jQuery('#filter_location').prop('selectedIndex', 0);	
@@ -102,10 +150,11 @@ jQuery("#filter_company").change(function(){
 		jQuery('#filter_designation').prop('selectedIndex', 0);
 	}	
 	jQuery.get(escapeHtmlSecure(site_url+"employees/filter_company_flocations/"+jQuery(this).val()), function(data, status){
-	jQuery('#location_ajaxflt').html(data);
+		jQuery('#location_ajaxflt').html(data);
 	});
 });
-/* Add data */ /*Form Submit*/
+
+/* Add data */
 $("#xin-form").submit(function(e){
 	var fd = new FormData(this);
 	var obj = $(this), action = obj.attr('name');
@@ -115,8 +164,6 @@ $("#xin-form").submit(function(e){
 	e.preventDefault();
 	$('.icon-spinner3').show();
 	$('.save').prop('disabled', true);
-	//$('#hrload-img').show();
-	//toastr.info(processing_request);
 	$.ajax({
 		url: e.target.action,
 		type: "POST",
@@ -127,40 +174,32 @@ $("#xin-form").submit(function(e){
 		success: function(JSON)
 		{
 			if (JSON.error != '') {
-				//toastr.clear();
-//$('#hrload-img').hide();
 				toastr.error(JSON.error);
 				$('.icon-spinner3').hide();
 				$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 				$('.save').prop('disabled', false);
 			} else {
-				//toastr.success(JSON.result);
 				$('.icon-spinner3').hide();
 				xin_table.api().ajax.reload(function(){ 
-					//toastr.clear();
-//$('#hrload-img').hide();
 					toastr.success(JSON.result);
 					$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
 				}, true);
 				$('.add-form').removeClass('in');
 				$('.select2-selection__rendered').html('--Select--');
-				$('#xin-form')[0].reset(); // To reset form fields
+				$('#xin-form')[0].reset();
 				$('.save').prop('disabled', false);
 			}
 		},
 		error: function() 
 		{
-			//toastr.clear();
-//$('#hrload-img').hide();
-			toastr.error(JSON.error);
-			$('input[name="csrf_hrsale"]').val(JSON.csrf_hash);
+			toastr.error('An error occurred.');
 			$('.icon-spinner3').hide();
 			$('.save').prop('disabled', false);
 		} 	        
    });
  });
-});
 $( document ).on( "click", ".delete", function() {
 $('input[name=_token]').val($(this).data('record-id'));
 $('#delete_record').attr('action',base_url+'/delete/'+$(this).data('record-id'));
+});
 });
