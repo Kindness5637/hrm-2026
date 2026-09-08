@@ -226,14 +226,19 @@ if( !function_exists('log_notification_mail') ){
  function log_notification_mail($from, $to, $cc = '', $subject = '', $sent = false, $body = ''){
   $CI=& get_instance();
   if(!$CI->db->table_exists('xin_notification_outbox')){ return; }
-  $CI->db->insert('xin_notification_outbox', array(
+  $data = array(
    'sent_from' => $from,
    'sent_to'   => $to,
    'cc'        => $cc,
    'subject'   => substr($subject, 0, 255),
-   'body'      => $body,
    'status'    => $sent ? 'sent' : 'failed',
    'created_at'=> date('Y-m-d H:i:s'),
-  ));
+  );
+  // Check if body column exists before including it
+  $fields = $CI->db->list_fields('xin_notification_outbox');
+  if(in_array('body', $fields)){
+   $data['body'] = $body;
+  }
+  $CI->db->insert('xin_notification_outbox', $data);
  }
 }

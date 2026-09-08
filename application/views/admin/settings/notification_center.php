@@ -182,6 +182,8 @@
                         <td>
                           <?php if (!empty($row->body)): ?>
                             <button class="btn btn-xs btn-info nc-view-email" data-body="<?php echo htmlspecialchars($row->body); ?>" data-subject="<?php echo htmlspecialchars($row->subject); ?>" data-to="<?php echo htmlspecialchars($row->sent_to); ?>"><i class="fa fa-eye"></i> View</button>
+                          <?php else: ?>
+                            <span class="text-muted">—</span>
                           <?php endif; ?>
                         </td>
                       </tr>
