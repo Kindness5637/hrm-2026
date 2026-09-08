@@ -21,5 +21,10 @@ $(document).ready(function(){
 			jQuery('#department_ajax').html(data);
 		});
 	});
+	// Auto-select if only 1 location and trigger department load
+	var locOpts = jQuery('#aj_location_id option[value!=""]');
+	if(locOpts.length === 1){
+		jQuery('#aj_location_id').val(locOpts.val()).trigger('change');
+	}
 });
 </script>

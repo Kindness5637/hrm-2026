@@ -23,6 +23,11 @@ $(document).ready(function(){
 			jQuery('#subdepartment_ajax').html(data);
 		});
 	});
+	// Auto-select if only 1 department and trigger sub-dept load
+	var deptOpts = jQuery('#aj_subdepartments option[value!=""]');
+	if(deptOpts.length === 1){
+		jQuery('#aj_subdepartments').val(deptOpts.val()).trigger('change');
+	}
 });
 </script>
 <?php } else {?>
@@ -36,6 +41,11 @@ jQuery("#aj_subdepartments").change(function(){
 });
 $('[data-plugin="select_hrm"]').select2($(this).attr('data-options'));
 	$('[data-plugin="select_hrm"]').select2({ width:'100%' });
+	// Auto-select if only 1 department and trigger designation load
+	var deptOpts = jQuery('#aj_subdepartments option[value!=""]');
+	if(deptOpts.length === 1){
+		jQuery('#aj_subdepartments').val(deptOpts.val()).trigger('change');
+	}
 });
 </script>
 <?php } ?>
