@@ -101,42 +101,78 @@ function selectSingleOption(container, selector) {
 	var options = select.find('option').filter(function(){ return $(this).val() !== ''; });
 	if (options.length === 1) {
 		select.val(options.first().val()).trigger('change');
+		return true;
 	}
+	return false;
+}
+
+function setCascadeLoading(message) {
+	$('#employee-cascade-status').html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> '+message).show();
+}
+
+function clearCascadeLoading() {
+	$('#employee-cascade-status').empty().hide();
 }
 
 function loadLocations(companyId) {
 	if (!companyId) {
 		$('#location_ajax').empty();
+		clearCascadeLoading();
 		return;
 	}
+	setCascadeLoading('Loading locations...');
+	$('#location_ajax select').prop('disabled', true);
 	$.get(base_url+"/get_company_elocations/"+companyId, function(data){
 		$('#location_ajax').html(data);
 		reinitSelect2($('#location_ajax'));
-		selectSingleOption($('#location_ajax'), '#aj_location_id');
+		$('#location_ajax select').prop('disabled', false);
+		if (!selectSingleOption($('#location_ajax'), '#aj_location_id')) {
+			clearCascadeLoading();
+		}
+	}).fail(function(){
+		clearCascadeLoading();
+		toastr.error('Unable to load locations. Please try again.');
 	});
 }
 
 function loadDepartments(locationId) {
 	if (!locationId) {
 		$('#department_ajax').empty();
+		clearCascadeLoading();
 		return;
 	}
+	setCascadeLoading('Loading departments...');
+	$('#department_ajax select').prop('disabled', true);
 	$.get(base_url+"/get_location_departments/"+locationId, function(data){
 		$('#department_ajax').html(data);
 		reinitSelect2($('#department_ajax'));
-		selectSingleOption($('#department_ajax'), '#aj_subdepartments');
+		$('#department_ajax select').prop('disabled', false);
+		if (!selectSingleOption($('#department_ajax'), '#aj_subdepartments')) {
+			clearCascadeLoading();
+		}
+	}).fail(function(){
+		clearCascadeLoading();
+		toastr.error('Unable to load departments. Please try again.');
 	});
 }
 
 function loadDesignations(departmentId) {
 	if (!departmentId) {
 		$('#designation_ajax').empty();
+		clearCascadeLoading();
 		return;
 	}
+	setCascadeLoading('Loading designations...');
+	$('#designation_ajax select').prop('disabled', true);
 	$.get(base_url+"/is_designation/"+departmentId, function(data){
 		$('#designation_ajax').html(data);
 		reinitSelect2($('#designation_ajax'));
+		$('#designation_ajax select').prop('disabled', false);
 		selectSingleOption($('#designation_ajax'), 'select[name="designation_id"]');
+		clearCascadeLoading();
+	}).fail(function(){
+		clearCascadeLoading();
+		toastr.error('Unable to load designations. Please try again.');
 	});
 }
 

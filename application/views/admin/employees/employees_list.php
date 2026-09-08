@@ -197,6 +197,7 @@
                 </div>
                 </div>
               </div>
+              <div id="employee-cascade-status" class="text-muted small" role="status" aria-live="polite" style="display:none; margin-top:-10px; margin-bottom:15px;"></div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
