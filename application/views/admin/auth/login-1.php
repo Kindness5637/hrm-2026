@@ -106,7 +106,7 @@ endif;
     outline-offset: -4px;
   }
 </style>
-<div class="login-box animated fadeInDownBig" style="background: #fff; border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); padding: 40px 50px; max-width: 520px; width: 100%; flex-shrink: 0;"> 
+<div class="login-box animated fadeInDownBig" style="background: rgba(255, 255, 255, 0.7); border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); padding: 40px 50px; max-width: 520px; width: 100%; flex-shrink: 0;"> 
   
   <!-- /.login-logo -->
   <?php if($this->session->flashdata('reset_password_success')):?>

@@ -87,55 +87,83 @@ $("#ihr_report").submit(function(e){
 		}, true);
 });
 
-// Helper: reinit select2 on a container and auto-select if only 1 option
+// Helper: reinit select2 on a container
 function reinitSelect2(container) {
-	var sel = container.find('select[data-plugin="select_hrm"]');
-	if (sel.length) {
-		sel.select2({ width:'100%' });
-		// Auto-select if only 1 real option
-		var opts = sel.find('option[value!=""]');
-		if (opts.length === 1) {
-			sel.val(opts.val()).trigger('change');
-		}
-	}
+	container.find('select[data-plugin="select_hrm"]').each(function(){
+		$(this).select2({ width:'100%', allowClear:true, placeholder: $(this).data('placeholder') || '' });
+	});
 }
 
 // === CHAIN: Company → Location → Department → Designation ===
 
-// Company change → load locations
-jQuery("#aj_company").change(function(){
-	var cid = jQuery(this).val();
-	if (!cid) return;
-	jQuery.get(escapeHtmlSecure(base_url+"/get_company_elocations/"+cid), function(data, status){
-		jQuery('#location_ajax').html(data);
-		reinitSelect2(jQuery('#location_ajax'));
+function selectSingleOption(container, selector) {
+	var select = container.find(selector);
+	var options = select.find('option').filter(function(){ return $(this).val() !== ''; });
+	if (options.length === 1) {
+		select.val(options.first().val()).trigger('change');
+	}
+}
+
+function loadLocations(companyId) {
+	if (!companyId) {
+		$('#location_ajax').empty();
+		return;
+	}
+	$.get(base_url+"/get_company_elocations/"+companyId, function(data){
+		$('#location_ajax').html(data);
+		reinitSelect2($('#location_ajax'));
+		selectSingleOption($('#location_ajax'), '#aj_location_id');
 	});
+}
+
+function loadDepartments(locationId) {
+	if (!locationId) {
+		$('#department_ajax').empty();
+		return;
+	}
+	$.get(base_url+"/get_location_departments/"+locationId, function(data){
+		$('#department_ajax').html(data);
+		reinitSelect2($('#department_ajax'));
+		selectSingleOption($('#department_ajax'), '#aj_subdepartments');
+	});
+}
+
+function loadDesignations(departmentId) {
+	if (!departmentId) {
+		$('#designation_ajax').empty();
+		return;
+	}
+	$.get(base_url+"/is_designation/"+departmentId, function(data){
+		$('#designation_ajax').html(data);
+		reinitSelect2($('#designation_ajax'));
+		selectSingleOption($('#designation_ajax'), 'select[name="designation_id"]');
+	});
+}
+
+// Company change → load locations, then continue the cascade when possible.
+jQuery(document).on('change', '#aj_company', function(){
+	loadLocations($(this).val());
 });
 
-// Location change → load departments (event delegation for dynamically loaded content)
+// Location change → load departments, then continue the cascade when possible.
 jQuery(document).on('change', '#aj_location_id', function(){
-	var lid = jQuery(this).val();
-	if (!lid) return;
-	jQuery.get(base_url+"/get_location_departments/"+lid, function(data, status){
-		jQuery('#department_ajax').html(data);
-		reinitSelect2(jQuery('#department_ajax'));
-	});
+	loadDepartments($(this).val());
 });
 
-// Department change → load designations (event delegation)
+// Department change → load designations and auto-select a sole designation.
 jQuery(document).on('change', '#aj_subdepartments', function(){
-	var did = jQuery(this).val();
-	if (!did) return;
-	jQuery.get(base_url+"/is_designation/"+did, function(data, status){
-		jQuery('#designation_ajax').html(data);
-		reinitSelect2(jQuery('#designation_ajax'));
-	});
+	loadDesignations($(this).val());
 });
 
-// Sub-department change → load designations (event delegation)
+// A company can already be selected when the form opens.
+if ($('#aj_company').val()) {
+	loadLocations($('#aj_company').val());
+}
+
+// Sub-department change → load designations
 jQuery(document).on('change', '#aj_subdepartment', function(){
 	var did = jQuery(this).val();
-	if (!did) return;
+	if (!did) { jQuery('#designation_ajax').html(''); return; }
 	jQuery.get(base_url+"/designation/"+did, function(data, status){
 		jQuery('#designation_ajax').html(data);
 		reinitSelect2(jQuery('#designation_ajax'));
@@ -143,7 +171,7 @@ jQuery(document).on('change', '#aj_subdepartment', function(){
 });
 
 // Filter company change
-jQuery("#filter_company").change(function(){
+jQuery(document).on('change', '#filter_company', function(){
 	if(jQuery(this).val() == 0){
 		jQuery('#filter_location').prop('selectedIndex', 0);	
 		jQuery('#filter_department').prop('selectedIndex', 0);
