@@ -1043,4 +1043,48 @@ if ( ! function_exists('hrm_leave_email'))
 		return hrm_email_wrap($company_name, $logo, $content);
 	}
 }
+
+/* =====================================================================
+ * In-app notifications
+ * ===================================================================== */
+
+if ( ! function_exists('hrm_notify_inbox'))
+{
+	function hrm_notify_inbox($user_id, $type, $title, $message, $link = '') {
+		$CI =& get_instance();
+		if(!$CI->db->table_exists('xin_notifications')) return;
+		$CI->db->insert('xin_notifications', array(
+			'user_id'    => $user_id,
+			'type'       => $type,
+			'title'      => $title,
+			'message'    => $message,
+			'link'       => $link,
+			'is_read'    => 0,
+			'created_at' => date('Y-m-d H:i:s'),
+		));
+	}
+}
+
+if ( ! function_exists('hrm_unread_count'))
+{
+	function hrm_unread_count($user_id) {
+		$CI =& get_instance();
+		if(!$CI->db->table_exists('xin_notifications')) return 0;
+		return (int) $CI->db->select('COUNT(*) as cnt')->from('xin_notifications')
+			->where('user_id', $user_id)->where('is_read', 0)->get()->row()->cnt;
+	}
+}
+
+if ( ! function_exists('hrm_get_notifications'))
+{
+	function hrm_get_notifications($user_id, $limit = 10) {
+		$CI =& get_instance();
+		if(!$CI->db->table_exists('xin_notifications')) return array();
+		return $CI->db->select('*')->from('xin_notifications')
+			->where('user_id', $user_id)
+			->order_by('created_at', 'DESC')
+			->limit($limit)
+			->get()->result();
+	}
+}
 ?>

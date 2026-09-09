@@ -92,7 +92,14 @@ if($theme[0]->animation_style == '') {
 					//$tsk_count = $this->Xin_model->count_notify_tasks();
 					$fcount = $proj_count + $leave_count + $tsk_count + $nst_count + $tkt_count;
 				} else {
-					$leaveapp = $this->Xin_model->get_last_user_leave_applications($session['user_id']);
+					// HR managers see all leave requests
+					if($user[0]->user_role_id == 3) {
+						$leaveapp = $this->Xin_model->get_notify_leave_applications();
+						$leave_count = $this->Xin_model->count_notify_leave_applications();
+					} else {
+						$leaveapp = $this->Xin_model->get_last_user_leave_applications($session['user_id']);
+						$leave_count = $this->Xin_model->count_user_notify_leave_applications($session['user_id']);
+					}
 					// projects
 					if(in_array('318',$role_resources_ids)) {
 						$nproject = $this->Xin_model->get_notify_company_projects($user[0]->company_id);
@@ -126,7 +133,6 @@ if($theme[0]->animation_style == '') {
 						$tkt_count = $this->Xin_model->count_notify_user_tickets($session['user_id']);
 					}
 					// count
-					$leave_count = $this->Xin_model->count_user_notify_leave_applications($session['user_id']);
 					$fcount = $proj_count + $leave_count + $tsk_count + $nst_count + $tkt_count;
 				}
 			 ?>

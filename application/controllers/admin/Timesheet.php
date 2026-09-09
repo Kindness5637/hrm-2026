@@ -3049,6 +3049,25 @@ $no_of_days = $workdays;
 					$Return['warning'] = 'Request saved, but notification failed for: '.implode(', ', $notify_failed);
 				}
 
+				// In-app notifications for HR and department head
+				$leave_link = site_url('admin/timesheet/leave');
+				$notif_title = 'New Leave Request';
+				$notif_msg = $full_name . ' has submitted a leave request from ' . $this->input->post('from_date') . ' to ' . $this->input->post('to_date') . '.';
+
+				// Notify HR managers (role_id = 3)
+				$hr_users = $this->db->select('user_id')->from('xin_employees')->where('user_role_id', 3)->where('is_active', 1)->get()->result();
+				foreach ($hr_users as $hr) {
+					hrm_notify_inbox($hr->user_id, 'leave', $notif_title, $notif_msg, $leave_link);
+				}
+
+				// Notify department head
+				if (!empty($dept_head_id)) {
+					$dh_user = $this->db->select('user_id')->from('xin_employees')->where('employee_id', $dept_head_id)->limit(1)->get()->row();
+					if ($dh_user) {
+						hrm_notify_inbox($dh_user->user_id, 'leave', $notif_title, $notif_msg, $leave_link);
+					}
+				}
+
 
 			}
 		} else {
