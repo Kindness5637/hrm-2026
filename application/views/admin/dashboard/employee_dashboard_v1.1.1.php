@@ -28,7 +28,6 @@ if(!is_null($role_user)){
 }
 ?>
 <?php $system = $this->Xin_model->read_setting_info(1);?>
-<?php $announcement = $this->Announcement_model->get_new_announcements();?>
 <?php  if($user[0]->profile_picture!='' && $user[0]->profile_picture!='no file') {?>
 <?php $profile_pic = base_url().'uploads/profile/'.$user[0]->profile_picture;?>
 <?php } else {?>
@@ -38,19 +37,6 @@ if(!is_null($role_user)){
 <?php 	$profile_pic = base_url().'uploads/profile/default_female.jpg';?>
 <?php } ?>
 <?php  } ?>
-<?php foreach($announcement as $new_announcement):?>
-<?php
-	$current_date = strtotime(date('Y-m-d'));
-	$announcement_end_date = strtotime($new_announcement->end_date);
-	if($current_date <= $announcement_end_date) {
-?>
-<div class="alert alert-success alert-dismissible">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-    <h4><i class="icon fa fa-check"></i> <?php echo $new_announcement->title;?>:</h4>
-    <?php echo $new_announcement->summary;?> <a href="#" class="alert-link" data-toggle="modal" data-target=".view-modal-annoucement" data-announcement_id="<?php echo $new_announcement->announcement_id;?>"><?php echo $this->lang->line('xin_view');?></a>
-  </div>
-<?php } ?>
-<?php endforeach;?>
 <div class="box-widget widget-user-2">
     <!-- Add the bg color to the header using any of the bg-* classes -->
     <div class="widget-user-header">

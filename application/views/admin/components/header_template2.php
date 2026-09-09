@@ -75,7 +75,7 @@ if($theme[0]->animation_style == '') {
             </a>
           </li>
           <?php } ?>
-		  <?php  if(in_array('90',$role_resources_ids)) { ?>
+      <?php  if(in_array('90',$role_resources_ids) || $user[0]->user_role_id != '1') { ?>
            <?php $fcount = 0; $leave_count = 0; $proj_count = 0; $tsk_count = 0;$nst_count = 0; $tkt_count = 0;
 				if($user[0]->user_role_id=='1'){
 					$leaveapp = $this->Xin_model->get_notify_leave_applications();
