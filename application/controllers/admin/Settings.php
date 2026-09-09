@@ -3819,10 +3819,6 @@ class Settings extends MY_Controller {
 			$Return['csrf_hash'] = $this->security->get_csrf_hash();
 
 			$pwd = $this->input->post('smtp_password');
-			// Encrypt password before storing (skip if already encrypted)
-			if (!empty($pwd) && !hrm_is_encrypted($pwd)) {
-				$pwd = hrm_encrypt($pwd);
-			}
 
 			$cdata = array(
 				'email_type'              => $this->input->post('email_type'),
