@@ -3015,7 +3015,7 @@ $no_of_days = $workdays;
 				$dept_head_id = $user_department[0]->employee_id;
 				$dept_user_info = $this->Xin_model->read_user_info($dept_head_id);
 
-				$leave_type_info = $this->Timesheet_model->read_leave_type_information($this->input->post('leave_type_id'));
+				$leave_type_info = $this->Timesheet_model->read_leave_type_information($this->input->post('leave_type'));
 				$leave_type_name = !empty($leave_type_info) ? $leave_type_info[0]->type_name : 'N/A';
 
 				$logo = base_url().'uploads/logo/signin/rsz_logo.png';
