@@ -221,7 +221,7 @@ class Auth extends MY_Controller
 
 		$query = $this->Xin_model->read_user_info_byemail($email);
 		if($query->num_rows() == 0){
-			$Return['error'] = 'No account found with that email address.';
+			$Return['result'] = 'If that email exists, an OTP has been sent.';
 			$this->output($Return);
 			return;
 		}

@@ -79,7 +79,7 @@ if(!empty($session)){
         <a href="<?php echo site_url('');?>" class="btn btn-default btn-block btn-flat" style="height: 48px;"><i class="fa fa-arrow-left"></i> Back to Login</a>
       </div>
       <div class="col-xs-6">
-        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-paper-plane"></i> Send Reset Link</button>
+        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-paper-plane"></i> Send OTP</button>
       </div>
     </div>
     <?php echo form_close();?>
