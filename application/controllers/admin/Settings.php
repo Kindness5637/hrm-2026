@@ -783,8 +783,7 @@ class Settings extends MY_Controller {
 		
 		if(in_array($ext,$allowed)){
 			$tmp_name = $_FILES["p_file"]["tmp_name"];
-		$doc_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
-		$profile = $doc_root."/uploads/logo/";
+		$profile = dirname(dirname(dirname(__FILE__))).'/uploads/logo/';
 		if(!is_dir($profile)){ @mkdir($profile, 0755, true); }
 		$set_img = base_url()."uploads/logo/";
 			// basename() may prevent filesystem traversal attacks;
@@ -846,8 +845,7 @@ class Settings extends MY_Controller {
 		
 		if(in_array($ext3,$allowed3)){
 			$tmp_name3 = $_FILES["favicon"]["tmp_name"];
-			$doc_root = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\');
-			$profile3 = $doc_root."/uploads/logo/favicon/";
+			$profile3 = dirname(dirname(dirname(__FILE__))).'/uploads/logo/favicon/';
 			if(!is_dir($profile3)){ @mkdir($profile3, 0755, true); }
 			$set_img3 = base_url()."uploads/logo/favicon/";
 			// basename() may prevent filesystem traversal attacks;
