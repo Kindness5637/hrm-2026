@@ -2812,7 +2812,7 @@ public function add_reconcile_leave() {
 				$dept_head_id = $user_department[0]->employee_id;
 				$dept_user_info = $this->Xin_model->read_user_info($dept_head_id);
 
-				$logo = base_url().'uploads/logo/signin/rsz_logo.png';
+				$logo = base_url().'uploads/logo/signin/'.(!empty($cinfo[0]->sign_in_logo) ? $cinfo[0]->sign_in_logo : 'rsz_logo.png');
 
 				$email_data = array(
 					'company_name' => $cinfo[0]->company_name,
@@ -3018,7 +3018,7 @@ $no_of_days = $workdays;
 				$leave_type_info = $this->Timesheet_model->read_leave_type_information($this->input->post('leave_type'));
 				$leave_type_name = !empty($leave_type_info) ? $leave_type_info[0]->type_name : 'N/A';
 
-				$logo = base_url().'uploads/logo/signin/rsz_logo.png';
+				$logo = base_url().'uploads/logo/signin/'.(!empty($cinfo[0]->sign_in_logo) ? $cinfo[0]->sign_in_logo : 'rsz_logo.png');
 
 				$email_data = array(
 					'company_name' => $cinfo[0]->company_name,
@@ -3351,7 +3351,7 @@ public function update_leave_status() {
 					$leave_type_info = $this->Timesheet_model->read_leave_type_information($timesheet[0]->leave_type_id);
 					$leave_type_name = !empty($leave_type_info) ? $leave_type_info[0]->type_name : 'N/A';
 
-					$logo = base_url().'uploads/logo/signin/rsz_logo.png';
+					$logo = base_url().'uploads/logo/signin/'.(!empty($cinfo[0]->sign_in_logo) ? $cinfo[0]->sign_in_logo : 'rsz_logo.png');
 
 					$email_data = array(
 						'company_name' => $cinfo[0]->company_name,
@@ -3401,7 +3401,7 @@ public function update_leave_status() {
 					$leave_type_info = $this->Timesheet_model->read_leave_type_information($timesheet[0]->leave_type_id);
 					$leave_type_name = !empty($leave_type_info) ? $leave_type_info[0]->type_name : 'N/A';
 
-					$logo = base_url().'uploads/logo/signin/rsz_logo.png';
+					$logo = base_url().'uploads/logo/signin/'.(!empty($cinfo[0]->sign_in_logo) ? $cinfo[0]->sign_in_logo : 'rsz_logo.png');
 
 					$email_data = array(
 						'company_name' => $cinfo[0]->company_name,
@@ -3455,7 +3455,7 @@ public function update_leave_status() {
 					$leave_type_info = $this->Timesheet_model->read_leave_type_information($timesheet[0]->leave_type_id);
 					$leave_type_name = !empty($leave_type_info) ? $leave_type_info[0]->type_name : 'N/A';
 
-					$logo = base_url().'uploads/logo/signin/rsz_logo.png';
+					$logo = base_url().'uploads/logo/signin/'.(!empty($cinfo[0]->sign_in_logo) ? $cinfo[0]->sign_in_logo : 'rsz_logo.png');
 
 					$email_data = array(
 						'company_name' => $cinfo[0]->company_name,
