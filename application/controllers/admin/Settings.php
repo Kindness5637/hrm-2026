@@ -783,8 +783,8 @@ class Settings extends MY_Controller {
 		
 		if(in_array($ext,$allowed)){
 			$tmp_name = $_FILES["p_file"]["tmp_name"];
-			$profile = "uploads/logo/";
-			$set_img = base_url()."uploads/logo/";
+		$profile = FCPATH."uploads/logo/";
+		$set_img = base_url()."uploads/logo/";
 			// basename() may prevent filesystem traversal attacks;
 			// further validation/sanitation of the filename may be appropriate
 			$name = basename($_FILES["p_file"]["name"]);
@@ -844,7 +844,7 @@ class Settings extends MY_Controller {
 		
 		if(in_array($ext3,$allowed3)){
 			$tmp_name3 = $_FILES["favicon"]["tmp_name"];
-			$profile3 = "uploads/logo/favicon/";
+			$profile3 = FCPATH."uploads/logo/favicon/";
 			$set_img3 = base_url()."uploads/logo/favicon/";
 			// basename() may prevent filesystem traversal attacks;
 			// further validation/sanitation of the filename may be appropriate
