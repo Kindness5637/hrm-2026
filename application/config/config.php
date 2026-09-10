@@ -489,7 +489,11 @@ $config['csrf_token_name'] = 'csrf_hrsale';
 $config['csrf_cookie_name'] = 'csrf_hrsale';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = FALSE;
-$config['csrf_exclude_uris'] = array();
+$config['csrf_exclude_uris'] = array(
+	'admin/auth/forgot_password_send',
+	'admin/auth/verify_otp_check',
+	'admin/auth/reset_password_save'
+);
 
 /*
 |--------------------------------------------------------------------------
