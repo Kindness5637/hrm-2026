@@ -1,17 +1,11 @@
 <?php $system = $this->Xin_model->read_setting_info(1);?>
 <?php $company = $this->Xin_model->read_company_setting_info(1);?>
 <?php $favicon = base_url().'uploads/logo/favicon/fav.png'?>
-<?php
-$session = $this->session->userdata('username');
-if(!empty($session)){
-	redirect('admin/dashboard/');
-}
-?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Forgot Password - <?php echo $company[0]->company_name;?></title>
+<title>Reset Password - <?php echo $company[0]->company_name;?></title>
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <link rel="icon" type="image/x-icon" href="<?php echo $favicon;?>">
 <link rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/theme_assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -52,7 +46,16 @@ if(!empty($session)){
       <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="logo" style="max-width: 280px; height: auto; margin-bottom: 10px;">
       <?php endif;?>
     </div>
-    <p class="login-box-msg">Enter your email to reset your password</p>
+
+    <?php if(empty($valid)):?>
+    <div class="alert alert-danger text-center">
+      <h4><i class="fa fa-exclamation-triangle"></i> Invalid or Expired Link</h4>
+      <p>This password reset link is invalid or has expired.</p>
+      <a href="<?php echo site_url('');?>" class="btn btn-primary" style="margin-top: 10px;">Back to Login</a>
+    </div>
+    <?php else:?>
+
+    <p class="login-box-msg">Set your new password</p>
 
     <?php if($this->session->flashdata('error')):?>
     <div class="alert alert-danger alert-dismissible">
@@ -61,28 +64,25 @@ if(!empty($session)){
     </div>
     <?php endif;?>
 
-    <?php if($this->session->flashdata('success')):?>
-    <div class="alert alert-success alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <?php echo $this->session->flashdata('success');?>
-    </div>
-    <?php endif;?>
-
-    <?php echo form_open('admin/auth/forgot_password_send', 'id="forgot-form" autocomplete="off"');?>
+    <?php echo form_open('admin/auth/reset_password_save', 'id="reset-form" autocomplete="off"');?>
+    <input type="hidden" name="token" value="<?php echo $token;?>">
     <div class="form-group has-feedback">
-      <input type="email" name="email" class="form-control" placeholder="Enter your email address" required style="height: 48px; font-size: 15px;">
-      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      <input type="password" name="password" class="form-control" placeholder="New Password" required minlength="6" style="height: 48px; font-size: 15px;">
+      <span class="glyphicon glyphicon-lock form-control-feedback"></span>
     </div>
-
+    <div class="form-group has-feedback" style="margin-bottom: 22px;">
+      <input type="password" name="password_confirm" class="form-control" placeholder="Confirm New Password" required minlength="6" style="height: 48px; font-size: 15px;">
+      <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+    </div>
     <div class="row">
-      <div class="col-xs-6">
-        <a href="<?php echo site_url('');?>" class="btn btn-default btn-block btn-flat" style="height: 48px;"><i class="fa fa-arrow-left"></i> Back to Login</a>
-      </div>
-      <div class="col-xs-6">
-        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-paper-plane"></i> Send Reset Link</button>
+      <div class="col-xs-12">
+        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-check"></i> Reset Password</button>
       </div>
     </div>
     <?php echo form_close();?>
+
+    <?php endif;?>
+
     <hr>
     <div class="lockscreen-footer text-center">
       &copy; <?php echo date('Y');?> <?php echo $system[0]->footer_text;?>
@@ -95,8 +95,18 @@ if(!empty($session)){
 <script type="text/javascript" src="<?php echo base_url();?>skin/hrsale_assets/vendor/toastr/toastr.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-  $('#forgot-form').submit(function(e){
+  $('#reset-form').submit(function(e){
     e.preventDefault();
+    var pass = $('input[name="password"]').val();
+    var pass2 = $('input[name="password_confirm"]').val();
+    if(pass !== pass2){
+      toastr.error('Passwords do not match');
+      return;
+    }
+    if(pass.length < 6){
+      toastr.error('Password must be at least 6 characters');
+      return;
+    }
     $('.save').prop('disabled', true);
     $('#hrload-img').show();
     $.ajax({
@@ -111,7 +121,6 @@ $(document).ready(function(){
           toastr.error(JSON.error);
         } else {
           toastr.success(JSON.result);
-          // Show success message in the form area
           setTimeout(function(){
             window.location = '<?php echo site_url('');?>';
           }, 2000);
