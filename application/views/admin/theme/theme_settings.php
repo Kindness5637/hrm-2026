@@ -562,3 +562,146 @@
     <?php } ?>
   </div>
 </section>
+<script type="text/javascript">
+$(document).ready(function(){
+  // Sign-in logo upload with AJAX + toast
+  $('#singin_logo').submit(function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('type', 'singin_logo');
+    $.ajax({
+      type: 'POST',
+      url: $(this).attr('action'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(JSON){
+        if(JSON.error != ''){
+          toastr.error(JSON.error);
+        } else {
+          toastr.success(JSON.result);
+          if(JSON.img){
+            $('#u_file3').attr('src', JSON.img);
+          }
+        }
+      },
+      error: function(){
+        toastr.error('Upload failed. Please try again.');
+      }
+    });
+  });
+
+  // Company logo upload
+  $('#logo_info').submit(function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('type', 'logo_info');
+    $.ajax({
+      type: 'POST',
+      url: $(this).attr('action'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(JSON){
+        if(JSON.error != ''){
+          toastr.error(JSON.error);
+        } else {
+          toastr.success(JSON.result);
+          if(JSON.img){
+            $('#u_file_1').attr('src', JSON.img);
+          }
+        }
+      },
+      error: function(){
+        toastr.error('Upload failed. Please try again.');
+      }
+    });
+  });
+
+  // Favicon upload
+  $('#logo_favicon').submit(function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('type', 'logo_favicon');
+    $.ajax({
+      type: 'POST',
+      url: $(this).attr('action'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(JSON){
+        if(JSON.error != ''){
+          toastr.error(JSON.error);
+        } else {
+          toastr.success(JSON.result);
+          if(JSON.img3){
+            $('#favicon1').attr('src', JSON.img3);
+          }
+        }
+      },
+      error: function(){
+        toastr.error('Upload failed. Please try again.');
+      }
+    });
+  });
+
+  // Job logo upload
+  $('#job_logo').submit(function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('type', 'job_logo');
+    $.ajax({
+      type: 'POST',
+      url: $(this).attr('action'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(JSON){
+        if(JSON.error != ''){
+          toastr.error(JSON.error);
+        } else {
+          toastr.success(JSON.result);
+          if(JSON.img){
+            $('#u_file4').attr('src', JSON.img);
+          }
+        }
+      },
+      error: function(){
+        toastr.error('Upload failed. Please try again.');
+      }
+    });
+  });
+
+  // Payroll logo upload
+  $('#ipayroll_logo').submit(function(e){
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append('type', 'ipayroll_logo');
+    $.ajax({
+      type: 'POST',
+      url: $(this).attr('action'),
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(JSON){
+        if(JSON.error != ''){
+          toastr.error(JSON.error);
+        } else {
+          toastr.success(JSON.result);
+          if(JSON.img){
+            $('#u_file5').attr('src', JSON.img);
+          }
+        }
+      },
+      error: function(){
+        toastr.error('Upload failed. Please try again.');
+      }
+    });
+  });
+});
+</script>
