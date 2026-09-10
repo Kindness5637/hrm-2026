@@ -322,6 +322,7 @@ class Theme extends MY_Controller
 		if(in_array($ext,$allowed)){
 			$tmp_name = $_FILES["p_file"]["tmp_name"];
 			$profile = FCPATH."uploads/logo/";
+			if(!is_dir($profile)){ @mkdir($profile, 0755, true); }
 			$set_img = base_url()."uploads/logo/";
 			// basename() may prevent filesystem traversal attacks;
 			// further validation/sanitation of the filename may be appropriate
@@ -348,6 +349,7 @@ class Theme extends MY_Controller
 		if(in_array($ext3,$allowed3)){
 			$tmp_name3 = $_FILES["favicon"]["tmp_name"];
 			$profile3 = FCPATH."uploads/logo/favicon/";
+			if(!is_dir($profile3)){ @mkdir($profile3, 0755, true); }
 			$set_img3 = base_url()."uploads/logo/favicon/";
 			// basename() may prevent filesystem traversal attacks;
 			// further validation/sanitation of the filename may be appropriate
@@ -401,6 +403,7 @@ class Theme extends MY_Controller
 			if(in_array($ext,$allowed)){
 				$tmp_name = $_FILES["p_file3"]["tmp_name"];
 				$profile = FCPATH."uploads/logo/signin/";
+				if(!is_dir($profile)){ @mkdir($profile, 0755, true); }
 				$set_img = base_url()."uploads/logo/signin/";
 				// basename() may prevent filesystem traversal attacks;
 				// further validation/sanitation of the filename may be appropriate
@@ -457,6 +460,7 @@ class Theme extends MY_Controller
 			if(in_array($ext,$allowed)){
 				$tmp_name = $_FILES["p_file5"]["tmp_name"];
 				$profile = FCPATH."uploads/logo/payroll/";
+				if(!is_dir($profile)){ @mkdir($profile, 0755, true); }
 				$set_img = base_url()."uploads/logo/payroll/";
 				// basename() may prevent filesystem traversal attacks;
 				// further validation/sanitation of the filename may be appropriate
@@ -514,6 +518,7 @@ class Theme extends MY_Controller
 			if(in_array($ext,$allowed)){
 				$tmp_name = $_FILES["p_file4"]["tmp_name"];
 				$profile = FCPATH."uploads/logo/job/";
+				if(!is_dir($profile)){ @mkdir($profile, 0755, true); }
 				$set_img = base_url()."uploads/logo/job/";
 				// basename() may prevent filesystem traversal attacks;
 				// further validation/sanitation of the filename may be appropriate
