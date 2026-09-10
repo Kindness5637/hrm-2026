@@ -1,17 +1,11 @@
 <?php $system = $this->Xin_model->read_setting_info(1);?>
 <?php $company = $this->Xin_model->read_company_setting_info(1);?>
 <?php $favicon = base_url().'uploads/logo/favicon/fav.png'?>
-<?php
-$session = $this->session->userdata('username');
-if(!empty($session)){
-	redirect('admin/dashboard/');
-}
-?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Forgot Password - <?php echo $company[0]->company_name;?></title>
+<title>Verify OTP - <?php echo $company[0]->company_name;?></title>
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <link rel="icon" type="image/x-icon" href="<?php echo $favicon;?>">
 <link rel="stylesheet" href="<?php echo base_url();?>skin/hrsale_assets/theme_assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
@@ -38,6 +32,14 @@ if(!empty($session)){
   position: relative;
   z-index: 1;
 }
+.otp-input {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 12px;
+  height: 56px;
+  width: 100%;
+}
 </style>
 </head>
 <body class="hold-transition login-page">
@@ -52,34 +54,19 @@ if(!empty($session)){
       <img src="<?php echo base_url();?>uploads/logo/signin/<?php echo $company[0]->sign_in_logo;?>" alt="logo" style="max-width: 280px; height: auto; margin-bottom: 10px;">
       <?php endif;?>
     </div>
-    <p class="login-box-msg">Enter your email to reset your password</p>
+    <p class="login-box-msg">Enter the 6-digit OTP sent to your email</p>
 
-    <?php if($this->session->flashdata('error')):?>
-    <div class="alert alert-danger alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <?php echo $this->session->flashdata('error');?>
+    <?php echo form_open('admin/auth/verify_otp_check', 'id="otp-form" autocomplete="off"');?>
+    <input type="hidden" name="email" value="<?php echo $email;?>">
+    <div class="form-group">
+      <input type="text" name="otp" class="form-control otp-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autocomplete="off" inputmode="numeric">
     </div>
-    <?php endif;?>
-
-    <?php if($this->session->flashdata('success')):?>
-    <div class="alert alert-success alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <?php echo $this->session->flashdata('success');?>
-    </div>
-    <?php endif;?>
-
-    <?php echo form_open('admin/auth/forgot_password_send', 'id="forgot-form" autocomplete="off"');?>
-    <div class="form-group has-feedback">
-      <input type="email" name="email" class="form-control" placeholder="Enter your email address" required style="height: 48px; font-size: 15px;">
-      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-    </div>
-
-    <div class="row">
+    <div class="row" style="margin-top: 20px;">
       <div class="col-xs-6">
-        <a href="<?php echo site_url('');?>" class="btn btn-default btn-block btn-flat" style="height: 48px;"><i class="fa fa-arrow-left"></i> Back to Login</a>
+        <a href="<?php echo site_url('');?>" class="btn btn-default btn-block btn-flat" style="height: 48px;"><i class="fa fa-arrow-left"></i> Back</a>
       </div>
       <div class="col-xs-6">
-        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-paper-plane"></i> Send Reset Link</button>
+        <button type="submit" class="btn btn-primary btn-block btn-flat save" style="height: 48px;"><i class="fa fa-check"></i> Verify OTP</button>
       </div>
     </div>
     <?php echo form_close();?>
@@ -95,8 +82,21 @@ if(!empty($session)){
 <script type="text/javascript" src="<?php echo base_url();?>skin/hrsale_assets/vendor/toastr/toastr.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-  $('#forgot-form').submit(function(e){
+  // Auto-focus and auto-submit when 6 digits entered
+  $('input[name="otp"]').on('input', function(){
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if(this.value.length === 6){
+      $('#otp-form').submit();
+    }
+  }).focus();
+
+  $('#otp-form').submit(function(e){
     e.preventDefault();
+    var otp = $('input[name="otp"]').val();
+    if(otp.length !== 6){
+      toastr.error('Please enter a 6-digit OTP');
+      return;
+    }
     $('.save').prop('disabled', true);
     $('#hrload-img').show();
     $.ajax({
@@ -109,11 +109,11 @@ $(document).ready(function(){
         $('.save').prop('disabled', false);
         if(JSON.error != ''){
           toastr.error(JSON.error);
+          $('input[name="otp"]').val('').focus();
         } else {
           toastr.success(JSON.result);
-          var email = $('input[name="email"]').val();
           setTimeout(function(){
-            window.location = '<?php echo site_url('admin/auth/verify_otp');?>?email=' + encodeURIComponent(email);
+            window.location = '<?php echo site_url('admin/auth/reset_password?email='.urlencode($email));?>';
           }, 1500);
         }
       },

@@ -210,7 +210,7 @@ class Auth extends MY_Controller
       }
 	  
 	public function forgot_password_send() {
-		$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
+		$Return = array('result'=>'', 'error'=>'');
 
 		$email = $this->input->post('email');
 		if(empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)){
@@ -219,7 +219,6 @@ class Auth extends MY_Controller
 			return;
 		}
 
-		// Find user by email
 		$query = $this->Xin_model->read_user_info_byemail($email);
 		if($query->num_rows() == 0){
 			$Return['error'] = 'No account found with that email address.';
@@ -228,51 +227,85 @@ class Auth extends MY_Controller
 		}
 
 		$user_info = $query->row();
-		$token = bin2hex(random_bytes(32));
-		$expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+		$otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+		$expires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
-		// Store token in xin_users
 		$this->db->where('user_id', $user_info->user_id);
 		$this->db->update('xin_employees', array(
-			'reset_token' => $token,
+			'reset_token' => $otp,
 			'reset_expires' => $expires
 		));
 
-		// Send reset email
 		$cinfo = $this->Xin_model->read_company_setting_info(1);
-		$reset_url = site_url('admin/auth/reset_password?token='.$token);
 		$full_name = $user_info->first_name.' '.$user_info->last_name;
 
-		$subject = 'Password Reset - '.$cinfo[0]->company_name;
+		$subject = 'Your Password Reset OTP - '.$cinfo[0]->company_name;
 		$body = '
 		<div style="background:#f6f6f6;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:14px;margin:0;padding:20px;">
 			<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:30px;">
-				<h2 style="color:#333;margin-top:0;">Password Reset Request</h2>
+				<h2 style="color:#333;margin-top:0;">Password Reset OTP</h2>
 				<p>Hello '.$full_name.',</p>
-				<p>You requested a password reset for your account. Click the button below to set a new password:</p>
+				<p>Your One-Time Password (OTP) for password reset is:</p>
 				<p style="text-align:center;margin:30px 0;">
-					<a href="'.$reset_url.'" style="background-color:#3c8dbc;color:#fff;padding:12px 30px;text-decoration:none;border-radius:4px;font-weight:bold;">Reset Password</a>
+					<span style="background:#3c8dbc;color:#fff;padding:15px 30px;font-size:32px;font-weight:bold;letter-spacing:8px;border-radius:8px;display:inline-block;">'.$otp.'</span>
 				</p>
-				<p style="color:#999;font-size:12px;">This link will expire in 1 hour. If you did not request this, please ignore this email.</p>
-				<p style="color:#999;font-size:12px;">If the button doesn\'t work, copy and paste this URL into your browser:<br>'.$reset_url.'</p>
+				<p style="color:#999;font-size:12px;">This OTP expires in 10 minutes. If you did not request this, please ignore this email.</p>
 			</div>
 		</div>';
 
 		hrsale_mail($cinfo[0]->email, $cinfo[0]->company_name, $email, $subject, $body);
 
-		$Return['result'] = 'Password reset link has been sent to your email.';
+		$Return['result'] = 'OTP has been sent to your email.';
 		$this->output($Return);
 	}
-	
+
+	public function verify_otp() {
+		$data['title'] = 'Verify OTP';
+		$data['email'] = $this->input->get('email');
+		$this->load->view('admin/auth/verify_otp', $data);
+	}
+
+	public function verify_otp_check() {
+		$Return = array('result'=>'', 'error'=>'');
+		$email = $this->input->post('email');
+		$otp = $this->input->post('otp');
+
+		if(empty($otp) || strlen($otp) != 6){
+			$Return['error'] = 'Please enter a valid 6-digit OTP.';
+			$this->output($Return);
+			return;
+		}
+
+		$query = $this->db->select('*')->from('xin_employees')
+			->where('email', $email)
+			->where('reset_token', $otp)
+			->where('reset_expires >', date('Y-m-d H:i:s'))
+			->get();
+
+		if($query->num_rows() == 0){
+			$Return['error'] = 'Invalid or expired OTP.';
+			$this->output($Return);
+			return;
+		}
+
+		$user = $query->row();
+		$this->db->where('user_id', $user->user_id);
+		$this->db->update('xin_employees', array(
+			'reset_expires' => date('Y-m-d H:i:s', strtotime('+10 minutes'))
+		));
+
+		$Return['result'] = 'OTP verified successfully.';
+		$this->output($Return);
+	}
+
 	public function reset_password() {
-		$token = $this->input->get('token');
-		$data['token'] = $token;
+		$email = $this->input->get('email');
+		$data['email'] = $email;
 		$data['valid'] = false;
 
-		if(!empty($token)){
-			// Check if token is valid and not expired
+		if(!empty($email)){
 			$query = $this->db->select('*')->from('xin_employees')
-				->where('reset_token', $token)
+				->where('email', $email)
 				->where('reset_expires >', date('Y-m-d H:i:s'))
 				->get();
 			if($query->num_rows() > 0){
@@ -286,12 +319,12 @@ class Auth extends MY_Controller
 
 	public function reset_password_save() {
 		$Return = array('result'=>'', 'error'=>'');
-		$token = $this->input->post('token');
+		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		$password_confirm = $this->input->post('password_confirm');
 
-		if(empty($token)){
-			$Return['error'] = 'Invalid reset link.';
+		if(empty($email)){
+			$Return['error'] = 'Invalid request.';
 			$this->output($Return);
 			return;
 		}
@@ -306,14 +339,13 @@ class Auth extends MY_Controller
 			return;
 		}
 
-		// Verify token
 		$query = $this->db->select('*')->from('xin_employees')
-			->where('reset_token', $token)
+			->where('email', $email)
 			->where('reset_expires >', date('Y-m-d H:i:s'))
 			->get();
 
 		if($query->num_rows() == 0){
-			$Return['error'] = 'Reset link is invalid or has expired.';
+			$Return['error'] = 'Session expired. Please start over.';
 			$this->output($Return);
 			return;
 		}
@@ -322,7 +354,6 @@ class Auth extends MY_Controller
 		$options = array('cost' => 12);
 		$password_hash = password_hash($password, PASSWORD_BCRYPT, $options);
 
-		// Update password and clear token
 		$this->db->where('user_id', $user->user_id);
 		$this->db->update('xin_employees', array(
 			'password' => $password_hash,
@@ -333,5 +364,5 @@ class Auth extends MY_Controller
 		$Return['result'] = 'Password has been reset successfully. You can now login.';
 		$this->output($Return);
 	}
-} 
+}
 ?>
