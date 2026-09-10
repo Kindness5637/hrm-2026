@@ -407,6 +407,8 @@ class Theme extends MY_Controller
 				$name = basename($_FILES["p_file3"]["name"]);
 				$newfilename = 'signin_logo_'.round(microtime(true)).'.'.$ext;
 				move_uploaded_file($tmp_name, $profile.$newfilename);
+				// Compress image
+				hrm_compress_image($profile.$newfilename, 600, 600, 75);
 				$fname = $newfilename;			
 				
 				$data = array(
@@ -461,6 +463,8 @@ class Theme extends MY_Controller
 				$name = basename($_FILES["p_file5"]["name"]);
 				$newfilename = 'payroll_logo_'.round(microtime(true)).'.'.$ext;
 				move_uploaded_file($tmp_name, $profile.$newfilename);
+				// Compress image
+				if($ext !== 'pdf') { hrm_compress_image($profile.$newfilename, 800, 800, 75); }
 				$fname = $newfilename;			
 				
 				$data = array(
@@ -516,6 +520,8 @@ class Theme extends MY_Controller
 				$name = basename($_FILES["p_file4"]["name"]);
 				$newfilename = 'job_logo_'.round(microtime(true)).'.'.$ext;
 				move_uploaded_file($tmp_name, $profile.$newfilename);
+				// Compress image
+				hrm_compress_image($profile.$newfilename, 600, 600, 75);
 				$fname = $newfilename;			
 				
 				$data = array(

@@ -1087,4 +1087,90 @@ if ( ! function_exists('hrm_get_notifications'))
 			->get()->result();
 	}
 }
+
+/* =====================================================================
+ * Image compression helper
+ * ===================================================================== */
+
+if ( ! function_exists('hrm_compress_image'))
+{
+	/**
+	 * Compress and resize an uploaded image.
+	 * @param string $file_path  Full path to the uploaded file (will be overwritten)
+	 * @param int    $max_width  Max width in pixels (default 800)
+	 * @param int    $max_height Max height in pixels (default 800)
+	 * @param int    $quality    JPEG quality 1-100 (default 75)
+	 * @return bool  true on success
+	 */
+	function hrm_compress_image($file_path, $max_width = 800, $max_height = 800, $quality = 75) {
+		if (!file_exists($file_path)) return false;
+
+		$ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+		$allowed = array('jpg', 'jpeg', 'png', 'gif');
+		if (!in_array($ext, $allowed)) return false;
+
+		// Get image info
+		$info = @getimagesize($file_path);
+		if ($info === false) return false;
+
+		$mime = $info['mime'];
+		$orig_width = $info[0];
+		$orig_height = $info[1];
+
+		// Create source image
+		switch ($mime) {
+			case 'image/jpeg':
+				$src = @imagecreatefromjpeg($file_path);
+				break;
+			case 'image/png':
+				$src = @imagecreatefrompng($file_path);
+				break;
+			case 'image/gif':
+				$src = @imagecreatefromgif($file_path);
+				break;
+			default:
+				return false;
+		}
+		if (!$src) return false;
+
+		// Calculate new dimensions
+		$ratio = min($max_width / $orig_width, $max_height / $orig_height, 1);
+		$new_width = (int)($orig_width * $ratio);
+		$new_height = (int)($orig_height * $ratio);
+
+		// Create resized canvas
+		$dst = imagecreatetruecolor($new_width, $new_height);
+
+		// Preserve transparency for PNG and GIF
+		if ($mime == 'image/png' || $mime == 'image/gif') {
+			$transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+			imagefilledrectangle($dst, 0, 0, $new_width, $new_height, $transparent);
+			imagealphablending($dst, false);
+			imagesavealpha($dst, true);
+		}
+
+		imagecopyresampled($dst, $src, 0, 0, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
+
+		// Save compressed
+		$result = false;
+		switch ($mime) {
+			case 'image/jpeg':
+				$result = imagejpeg($dst, $file_path, $quality);
+				break;
+			case 'image/png':
+				// PNG compression level 0-9 (9 = max)
+				$png_quality = (int)(9 - ($quality / 100 * 9));
+				$result = imagepng($dst, $file_path, $png_quality);
+				break;
+			case 'image/gif':
+				$result = imagegif($dst, $file_path);
+				break;
+		}
+
+		imagedestroy($src);
+		imagedestroy($dst);
+
+		return $result;
+	}
+}
 ?>

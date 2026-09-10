@@ -790,6 +790,8 @@ class Settings extends MY_Controller {
 			$name = basename($_FILES["p_file"]["name"]);
 			$newfilename = 'logo_'.round(microtime(true)).'.'.$ext;
 			move_uploaded_file($tmp_name, $profile.$newfilename);
+			// Compress image
+			hrm_compress_image($profile.$newfilename, 800, 800, 75);
 			$fname = $newfilename;			
 			
 			} else {
@@ -849,6 +851,8 @@ class Settings extends MY_Controller {
 			$name = basename($_FILES["favicon"]["name"]);
 			$newfilename3 = 'favicon_'.round(microtime(true)).'.'.$ext3;
 			move_uploaded_file($tmp_name3, $profile3.$newfilename3);
+			// Compress image
+			hrm_compress_image($profile3.$newfilename3, 64, 64, 80);
 			$fname3 = $newfilename3;			
 			
 			} else {
