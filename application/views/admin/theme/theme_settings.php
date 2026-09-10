@@ -380,7 +380,7 @@
         <div id="hrsale_2" class="box-body">
           <?php $attributes = array('name' => 'singin_logo', 'id' => 'singin_logo', 'autocomplete' => 'off');?>
           <?php $hidden = array('company_logo' => 'UPDATE');?>
-          <?php echo form_open_multipart('admin/admin/singin_logo/', $attributes, $hidden);?>
+          <?php echo form_open_multipart('admin/theme/sign_in_logo', $attributes, $hidden);?>
           <div class="row">
             <div class="col-md-6">
               <div class='form-group'>
