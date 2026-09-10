@@ -2819,8 +2819,8 @@ public function add_reconcile_leave() {
 					'logo'         => $logo,
 					'site_url'     => site_url(),
 					'emp_name'     => $full_name,
-					'from_date'    => $this->input->post('from_date'),
-					'to_date'      => $this->input->post('to_date'),
+					'from_date'    => $this->input->post('start_date'),
+					'to_date'      => $this->input->post('end_date'),
 					'leave_id'     => $row->leave_id,
 					'leave_type'   => $type_name,
 					'reason'       => $this->input->post('reason'),
@@ -3025,8 +3025,8 @@ $no_of_days = $workdays;
 					'logo'         => $logo,
 					'site_url'     => site_url(),
 					'emp_name'     => $full_name,
-					'from_date'    => $this->input->post('from_date'),
-					'to_date'      => $this->input->post('to_date'),
+					'from_date'    => $this->input->post('start_date'),
+					'to_date'      => $this->input->post('end_date'),
 					'leave_id'     => 0,
 					'leave_type'   => $leave_type_name,
 					'reason'       => $this->input->post('reason'),
@@ -3052,7 +3052,7 @@ $no_of_days = $workdays;
 				// In-app notifications for HR and department head
 				$leave_link = site_url('admin/timesheet/leave');
 				$notif_title = 'New Leave Request';
-				$notif_msg = $full_name . ' has submitted a leave request from ' . $this->input->post('from_date') . ' to ' . $this->input->post('to_date') . '.';
+				$notif_msg = $full_name . ' has submitted a leave request from ' . $this->input->post('start_date') . ' to ' . $this->input->post('end_date') . '.';
 
 				// Notify HR managers (role_id = 3)
 				$hr_users = $this->db->select('user_id')->from('xin_employees')->where('user_role_id', 3)->where('is_active', 1)->get()->result();
